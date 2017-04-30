@@ -3,5 +3,5 @@
     "watch": ["*.js"],
     "ext": "ts js json",
     "ignore": ["node_modules/*"],
-    "exec": "set DEBUG=app:*,-not_this & node --inspect --debug-brk index.js"
+    "exec": "set DEBUG=app:*,-not_this & node --inspect --debug-brk start.js"
 }
