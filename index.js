@@ -81,16 +81,18 @@ function messUp(code, opt) {
                 let tpl = '';
                 const decentMap = {}
                 headerArr.forEach(function (v, i) {
-
-                    v.value = v.value.replace(/\\/g, "\\\\");
-                    v.value = v.value.replace(/'/g, "\\'");
+                    let code = v.value;
+                    code = code.replace(/\\/g, "\\\\");
+                    code = code.replace(/\n/g, "\\n");
+                    code = code.replace(/'/g, "\\'");
                     const char = alphabet[i % alphabet.length];
                     const name = path.scope.generateUidIdentifier(char).name;
                     v.name = name;
                     decentMap[name] = name;
-                    tpl += `var ${name}='${v.value}';`;
+                    tpl += `var ${name}='${code}';`;
                 });
                 path.unshiftContainer('body', template(tpl)({}));
+
                 path.node.decentMap = decentMap;
             }
         },
@@ -117,19 +119,29 @@ function messUp(code, opt) {
     });
 
     //step4 handle string
+
+    let skipCnt = headCnt;
     traverse(ast, {
         StringLiteral: {
             enter(path) {
+                if (path.parent.type === "ObjectProperty") {
+                    return;
+                }
                 const parent = path.findParent((path) => path.isFunctionDeclaration() || path.isProgram())
                 const text = path.node.value;
+
+
                 if (!text) {
                     return;
                 }
-                if (parent.isProgram() && headerArr.some((head) => text === head.value)) {
 
+                if (skipCnt) {
+                    skipCnt--;
                     return;
-
                 }
+
+
+
                 const decentMap = parent.node.decentMap;
 
                 const arr = text.split("").map(function (ch) {
@@ -139,7 +151,7 @@ function messUp(code, opt) {
                     let index = headerArr[randomIndex].value.indexOf(ch);
                     return `${name}[${index}]`;
                 });
-                path.replaceWith(template(arr.join("+"))({}));
+                path.replaceWith(template("(" + arr.join("+") + ")")({}));
             }
         },
 
