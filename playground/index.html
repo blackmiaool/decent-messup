@@ -14,20 +14,12 @@
     <script type="text/javascript" src="jquery.min.js"></script>
     <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
     <script type="text/javascript">
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('#main_content').headsmart()
         })
     </script>
     <title>decent-messup</title>
 
-    <script src="lua5.1.5.min.js"></script>
-    <script src="example.lua5.1.js"></script>
-
-
-    <link rel="stylesheet" href="codemirror/codemirror.css">
-    <link rel="stylesheet" href="codemirror/neat.css">
-    <script src="codemirror/codemirror.js"></script>
-    <script src="codemirror/lua.js"></script>
     <style>
         .CodeMirror {
             border: 1px solid black;
@@ -41,12 +33,12 @@
 
         <header>
             <span class="ribbon-outer">
-          <span class="ribbon-inner">
-            <h1>Decent-Mess-up</h1>
-            <h2>Mess up js code in a different way</h2>
-          </span>
-            <span class="left-tail"></span>
-            <span class="right-tail"></span>
+                <span class="ribbon-inner">
+                    <h1>Decent-Mess-up</h1>
+                    <h2>Mess up js code in a different way</h2>
+                </span>
+                <span class="left-tail"></span>
+                <span class="right-tail"></span>
             </span>
         </header>
 
@@ -61,8 +53,10 @@
 
 
         <section id="main_content">
+<!--
             <h3>
-                <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Just A Simple Combination </h3>
+                <a id="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages" aria-hidden="true"><span class="octicon octicon-link"></span></a>Just A Simple Combination 
+            </h3>
 
             <p>This is a lua formatter written in lua5.1. <a href="https://github.com/denglf/FormatLua">FormatLua</a></p>
             <p>This is a lua vm built with emscripten. <a href="https://github.com/logiceditor-com/lua5.1.js">lua5.1.js</a></p>
@@ -71,6 +65,7 @@
                 <a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>An Inefficient Implement </h3>
 
             <p>Cause of the efficiency wasted in the process of lua2js ,it need about 1 second to launch. So if you find a lua formatter written in pure js someday, what you should do at once is just throwing this project away. </p>
+-->
 
             <h3>
                 <a id="creating-pages-manually" class="anchor" href="#creating-pages-manually" aria-hidden="true"><span class="octicon octicon-link"></span></a>Here It Is</h3>
@@ -97,22 +92,13 @@ function shuffle(array) {
                     <input id="beautify" type="button" value="Beautify">
 
                 </form>
-                <script>
-                    var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
-                        matchBrackets: true,
-                        theme: "neat"
-                    });
-                </script>
-
-
-
             </article>
         </section>
 
         <footer>
             <span class="ribbon-outer">
           <span class="ribbon-inner">
-            <p>this project by <a href="https://github.com/blackmiaool">blackmiaool</a> can be found on <a href="https://github.com/blackmiaool/lua-beautify">GitHub</a></p>
+            <p>this project by <a href="https://github.com/blackmiaool">blackmiaool</a> can be found on <a href="https://github.com/blackmiaool/decent-messup">GitHub</a></p>
           </span>
             <span class="left-tail"></span>
             <span class="right-tail"></span>
@@ -124,51 +110,7 @@ function shuffle(array) {
     </div>
 
 
-    <script type="text/javascript">
-        var C = Lua5_1.C;
 
-        function lua_init() {
-            L = C.lua_open();
-            C.luaL_openlibs(L);
-            C.lua_pushcfunction(L, Lua5_1.Runtime.addFunction(
-                function (L) {
-                    var str = C.luaL_checkstring(L, 1);
-                    console.log(str);
-                    editor.setValue(str);
-                    return 0;
-                }
-            ));
-            C.lua_setglobal(L, "OUTPUT");
-            C.luaL_dofile(L, 'main.lua');
-        }
-
-        lua_init();
-
-
-
-        function beautify() {
-            value = editor.getValue();
-            console.log("value", value)
-            C.lua_pushstring(L, value);
-            C.lua_setglobal(L, "toS");
-            if (C.luaL_dostring(L, "OUTPUT(M.indentcode(toS, [[\n\n]], true, '    '))") !== 0) {
-
-                var err = C.lua_tostring(L, -1);
-                C.lua_close(L);
-                //                L = 0;
-                lua_init();
-                throw new Error("Lua error: " + err);
-
-            }
-
-        }
-        document.getElementById("beautify").onclick = function () {
-            console.log("www")
-            beautify();
-        }
-
-        //        console.log(value)
-    </script>
 
 </body>
 
