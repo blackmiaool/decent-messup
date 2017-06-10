@@ -114,7 +114,7 @@ header, footer, section {
 
 div.shell {
   display: block;
-  width: 670px;
+  width: 900px;
   margin: 0 auto;
 }
 
@@ -259,12 +259,14 @@ section#downloads a.tgz:hover {
 }
 
 span.banner-fix {
+   
   background: transparent url(../images/download-fallback-bg.png) center top no-repeat;
   display: block;
   height: 19px;
   position: absolute;
   width: 670px;
   top: 19px;
+     display: none;
 }
 
 section#main_content {

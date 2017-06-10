@@ -3,6 +3,7 @@
   "version": "1.0.2",
   "description": "",
   "main": "index.js",
+  "entry": "dist/dist.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -24,6 +25,10 @@
     "babylon": "^6.17.0"
   },
   "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.0.0",
+    "babel-preset-latest": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "webpack": "^2.6.1"
   }
 }

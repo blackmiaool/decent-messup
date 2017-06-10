@@ -140,8 +140,6 @@ function messUp(code, opt) {
                     return;
                 }
 
-
-
                 const decentMap = parent.node.decentMap;
 
                 const arr = text.split("").map(function (ch) {
