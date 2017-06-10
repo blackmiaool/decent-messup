@@ -1,6 +1,4 @@
 $(function () {
-
-    console.dir($("#input")[0])
     const inputWindow = $("#input")[0].contentWindow;
     const outputWindow = $("#output")[0].contentWindow;
     const $errorOutput = $("#error-output");
@@ -9,7 +7,12 @@ $(function () {
         setOutputReady = resolve;
     });
     const demoReady = new Promise(function (resolve, reject) {
-        $.get("demo.js", resolve);
+        $.ajax({
+            url:"demo.js",
+            type:"GET",
+            dataType:"text",
+            success:resolve
+        });
     });
     window.addEventListener('message', function ({
         source,
@@ -37,7 +40,7 @@ $(function () {
                     let code;
                     $errorOutput.empty();
                     try {
-                        code = decentMessUp(data);
+                        code = decentMessUp(data,{es6:true});
                     } catch (e) {
                         $errorOutput.text(e.message);
                         outputReady.then(function () {

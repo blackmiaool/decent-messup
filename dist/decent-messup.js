@@ -16765,11 +16765,15 @@ function messUp(code, opt) {
 
     var _opt = opt,
         _opt$headCnt = _opt.headCnt,
-        headCnt = _opt$headCnt === undefined ? 3 : _opt$headCnt;
+        headCnt = _opt$headCnt === undefined ? 3 : _opt$headCnt,
+        _opt$es = _opt.es6,
+        es6 = _opt$es === undefined ? false : _opt$es;
 
 
     var ast = babylon.parse(code);
+
     var alphabet = "abcdefghijklmnopqrstuvwxyz";
+    var declarWord = es6 ? 'const' : 'var';
 
     function shuffle(array) {
         var currentIndex = array.length,
@@ -16791,7 +16795,7 @@ function messUp(code, opt) {
         return Math.floor(Math.random() * headCnt);
     }
     var headerArr = [];
-    //step1 stringify key
+    //step1 stringify keys
     traverse(ast, {
         MemberExpression: {
             enter: function enter(path) {
@@ -16803,6 +16807,25 @@ function messUp(code, opt) {
             }
         }
     });
+    if (es6) {
+        traverse(ast, {
+            ObjectProperty: {
+                enter: function enter(path) {
+                    if (path.node.computed) {
+                        return;
+                    }
+                    path.node.computed = true;
+                    var key = path.node.key;
+                    if (key.type === "StringLiteral") {} else if (key.type === "Identifier") {
+                        key.type = "StringLiteral";
+                        key.value = key.name;
+                    }
+                }
+            }
+
+        });
+    }
+
     //step2 get charset
     var charset = {};
 
@@ -16839,7 +16862,7 @@ function messUp(code, opt) {
                     var name = path.scope.generateUidIdentifier(char).name;
                     v.name = name;
                     decentMap[name] = name;
-                    tpl += "var " + name + "='" + code + "';";
+                    tpl += declarWord + " " + name + "='" + code + "';";
                 });
                 path.unshiftContainer('body', template(tpl)({}));
 
@@ -16848,23 +16871,24 @@ function messUp(code, opt) {
         }
     });
     //step3 add declaration
-    traverse(ast, {
-        FunctionDeclaration: {
-            enter: function enter(path) {
-                var tpl = '';
-                shuffle(headerArr);
-                var decentMap = {};
-                headerArr.forEach(function (v, i) {
-                    var char = alphabet[i % alphabet.length];
-                    var name = path.scope.generateUidIdentifier(char).name;
-                    tpl += "var " + name + "=" + v.name + ";";
-                    decentMap[v.name] = name;
-                });
-                path.get("body").unshiftContainer('body', template(tpl)({}));
-                path.node.decentMap = decentMap;
-            }
+    var functionDeclarationAndExpression = {
+        enter: function enter(path) {
+            var tpl = '';
+            shuffle(headerArr);
+            var decentMap = {};
+            headerArr.forEach(function (v, i) {
+                var char = alphabet[i % alphabet.length];
+                var name = path.scope.generateUidIdentifier(char).name;
+                tpl += declarWord + " " + name + "=" + v.name + ";";
+                decentMap[v.name] = name;
+            });
+            path.get("body").unshiftContainer('body', template(tpl)({}));
+            path.node.decentMap = decentMap;
         }
-
+    };
+    traverse(ast, {
+        FunctionDeclaration: functionDeclarationAndExpression,
+        FunctionExpression: functionDeclarationAndExpression
     });
 
     //step4 handle string
@@ -16873,7 +16897,7 @@ function messUp(code, opt) {
     traverse(ast, {
         StringLiteral: {
             enter: function enter(path) {
-                if (path.parent.type === "ObjectProperty") {
+                if (path.parent.type === "ObjectProperty" && path.key === 'key' && !es6) {
                     return;
                 }
                 var parent = path.findParent(function (path) {

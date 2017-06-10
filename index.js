@@ -15,10 +15,13 @@ function messUp(code, opt) {
 
     const {
         headCnt = 3,
+            es6 = false,
     } = opt;
 
     const ast = babylon.parse(code);
+
     const alphabet = "abcdefghijklmnopqrstuvwxyz";
+    const declarWord = es6 ? 'const' : 'var';
 
     function shuffle(array) {
         var currentIndex = array.length,
@@ -39,7 +42,7 @@ function messUp(code, opt) {
         return Math.floor(Math.random() * headCnt);
     }
     const headerArr = [];
-    //step1 stringify key
+    //step1 stringify keys
     traverse(ast, {
         MemberExpression: {
             enter(path) {
@@ -53,6 +56,25 @@ function messUp(code, opt) {
             }
         }
     });
+    if (es6) {
+        traverse(ast, {
+            ObjectProperty: {
+                enter(path) {
+                    if (path.node.computed) {
+                        return;
+                    }
+                    path.node.computed = true;
+                    const key = path.node.key;
+                    if (key.type === "StringLiteral") {} else if (key.type === "Identifier") {
+                        key.type = "StringLiteral";
+                        key.value = key.name;
+                    }
+                }
+            },
+
+        });
+    }
+
     //step2 get charset
     const charset = {};
 
@@ -89,7 +111,7 @@ function messUp(code, opt) {
                     const name = path.scope.generateUidIdentifier(char).name;
                     v.name = name;
                     decentMap[name] = name;
-                    tpl += `var ${name}='${code}';`;
+                    tpl += `${declarWord} ${name}='${code}';`;
                 });
                 path.unshiftContainer('body', template(tpl)({}));
 
@@ -98,24 +120,25 @@ function messUp(code, opt) {
         },
     });
     //step3 add declaration
+    const functionDeclarationAndExpression = {
+        enter(path) {
+            let tpl = '';
+            shuffle(headerArr);
+            const decentMap = {}
+            headerArr.forEach(function (v, i) {
+                const char = alphabet[i % alphabet.length];
+                const name = path.scope.generateUidIdentifier(char).name;
+                tpl += `${declarWord} ${name}=${v.name};`;
+                decentMap[v.name] = name;
+            });
+            path.get("body").unshiftContainer('body', template(tpl)({}));
+            path.node.decentMap = decentMap;
+
+        }
+    };
     traverse(ast, {
-        FunctionDeclaration: {
-            enter(path) {
-                let tpl = '';
-                shuffle(headerArr);
-                const decentMap = {}
-                headerArr.forEach(function (v, i) {
-                    const char = alphabet[i % alphabet.length];
-                    const name = path.scope.generateUidIdentifier(char).name;
-                    tpl += `var ${name}=${v.name};`;
-                    decentMap[v.name] = name;
-                });
-                path.get("body").unshiftContainer('body', template(tpl)({}));
-                path.node.decentMap = decentMap;
-
-            }
-        },
-
+        FunctionDeclaration: functionDeclarationAndExpression,
+        FunctionExpression: functionDeclarationAndExpression
     });
 
     //step4 handle string
@@ -124,7 +147,7 @@ function messUp(code, opt) {
     traverse(ast, {
         StringLiteral: {
             enter(path) {
-                if (path.parent.type === "ObjectProperty") {
+                if (path.parent.type === "ObjectProperty" && path.key === 'key' && !es6) {
                     return;
                 }
                 const parent = path.findParent((path) => path.isFunctionDeclaration() || path.isProgram())
