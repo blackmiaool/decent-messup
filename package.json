@@ -22,5 +22,8 @@
     "babel-traverse": "^6.24.1",
     "babel-types": "^6.24.1",
     "babylon": "^6.17.0"
+  },
+  "devDependencies": {
+    "webpack": "^2.6.1"
   }
 }
