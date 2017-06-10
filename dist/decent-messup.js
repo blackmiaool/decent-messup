@@ -16770,8 +16770,10 @@ function messUp(code, opt) {
         es6 = _opt$es === undefined ? false : _opt$es;
 
 
-    var ast = babylon.parse(code);
-
+    var ast = babylon.parse(code, {
+        sourceType: 'module'
+    });
+    //    console.log(JSON.parse(JSON.stringify(ast)));
     var alphabet = "abcdefghijklmnopqrstuvwxyz";
     var declarWord = es6 ? 'const' : 'var';
 
@@ -16898,6 +16900,14 @@ function messUp(code, opt) {
         StringLiteral: {
             enter: function enter(path) {
                 if (path.parent.type === "ObjectProperty" && path.key === 'key' && !es6) {
+                    return;
+                }
+                if (path.parent.type === "ImportDeclaration") {
+                    //not in import
+                    return;
+                }
+                if (path.parent.type === "CallExpression" && path.parent.callee.name === 'require') {
+                    //not in require
                     return;
                 }
                 var parent = path.findParent(function (path) {
