@@ -6,7 +6,10 @@
 
 Want to understand my js? No way!
 
+
 ### Demo
+
+[Playground](http://blackmiaool.com/decent-messup/playground/)
 
 **Input:**
 
