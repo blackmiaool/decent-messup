@@ -1,6 +1,6 @@
 {
   "name": "decent-messup",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Mess up js in a different way.",
   "main": "index.js",
   "scripts": {
