@@ -66,6 +66,40 @@ const messup=require('decent-messup');
 messup(yourcode[,options]);
 ```
 
+#### Use with Webpack
+
+```js
+module: {
+    loaders: [{
+        test: /\.jsx?$/,
+        loader: 'decent-messup/loader',
+        query: {
+            headCnt:5,
+            es6:true
+        },
+        },{
+        test: /\.jsx?$/,
+        loader: 'babel-loader',
+        query: {
+            presets: ['latest', 'stage-0'],
+            plugins: []
+        },
+        }]
+},
+```
+
+#### Use with Gulp
+
+```js
+const transform = require('gulp-transform');
+const messup = require('decent-messup');
+gulp.task('quadruple', function() {
+  return gulp.src('src/*.js')
+    .pipe(transform(code => messup(code,{headCnt:5,es6:true})))
+    .pipe(gulp.dest('dist'));
+});
+```
+
 ### Options
 
 The default options are:

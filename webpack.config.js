@@ -1,6 +1,5 @@
 const path = require('path');
 const webpack = require('webpack');
-const MessupLoader=require('./loader.js');
 const config = {
     entry: {
         'decent-messup': ['./index.js'],        
