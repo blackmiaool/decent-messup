@@ -95,7 +95,7 @@ const transform = require('gulp-transform');
 const messup = require('decent-messup');
 gulp.task('quadruple', function() {
   return gulp.src('src/*.js')
-    .pipe(transform(code => messup(code,{headCnt:5,es6:true})))
+    .pipe(transform('utf8', code => messup(code,{headCnt:5,es6:true})))
     .pipe(gulp.dest('dist'));
 });
 ```
