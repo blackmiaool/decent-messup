@@ -1,6 +1,6 @@
 {
   "name": "decent-messup",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "Mess up js in a different way.",
   "main": "index.js",
   "scripts": {
@@ -17,10 +17,11 @@
   },
   "homepage": "https://github.com/blackmiaool/decent-messup#readme",
   "dependencies": {
-    "babel-generator": "^6.24.1",
-    "babel-template": "^6.24.1",
-    "babel-traverse": "^6.24.1",
-    "babel-types": "^6.24.1",
+    "@babel/generator": "^7.4.4",
+    "@babel/parser": "^7.4.4",
+    "@babel/template": "^7.4.4",
+    "@babel/traverse": "^7.4.4",
+    "@babel/types": "^7.4.4",
     "babylon": "^6.17.0"
   },
   "devDependencies": {

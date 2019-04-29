@@ -1,12 +1,13 @@
-const babylon = require("babylon");
+const babelParser = require("@babel/parser");
 const {
     default: generate
-} = require("babel-generator");
+} = require("@babel/generator");
 const {
     default: traverse
-} = require("babel-traverse");
-const template = require("babel-template");
-const t = require("babel-types");
+} = require("@babel/traverse");
+const {default:template} = require("@babel/template");
+const t = require("@babel/types");
+
 
 function messUp(code, opt) {
     if (!opt || typeof opt !== "object") {
@@ -18,7 +19,7 @@ function messUp(code, opt) {
             es6 = false,
     } = opt;
 
-    const ast = babylon.parse(code, {
+    const ast = babelParser.parse(code, {
         sourceType: 'module'
     });
 //    console.log(JSON.parse(JSON.stringify(ast)));
